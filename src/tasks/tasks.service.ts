@@ -14,6 +14,9 @@ export class TasksService {
     private taskRepository: TaskRepository
   ) { }
 
+  async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto)
+  }
   // getAllTasks(): Task[] {
   //   return this.tasks
   // }
@@ -47,9 +50,11 @@ export class TasksService {
     if (result.raw.affectedRows === 0) throw new NotFoundException(`Task with ID of ${id} not found.`)
   }
 
-  // updateTaskStatus(id: string, status: TaskStatus): Task {
-  //   const task = this.getTaskById(id)
-  //   task.status = status
-  //   return task
-  // }
+  async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
+    const task = await this.getTaskById(id)
+    task.status = status
+    await task.save()
+
+    return task
+  }
 }
